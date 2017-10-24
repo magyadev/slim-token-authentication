@@ -27,9 +27,9 @@ class TokenAuthentication
         'error' => null,
         'header' => 'Authorization',
         'regex' => '/Bearer\s+(.*)$/i',
-        'parameter' => 'authorization',
-        'cookie' => 'authorization',
-        'argument' => 'authorization'
+        'parameter' => null,
+        'cookie' => null,
+        'argument' => null,
     ];
 
     private $response = [];
