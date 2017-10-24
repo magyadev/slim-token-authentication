@@ -1,7 +1,7 @@
 # Slim Token Authentication
 
-This is a Token Authentication Middleware for Slim 3.0+. 
-This middleware was designed to maintain easy to implement token authentication with custom authenticator.  
+This is a Token Authentication Middleware for Slim 3.0+.
+This middleware was designed to maintain easy to implement token authentication with custom authenticator.
 
 ## Installing
 
@@ -14,7 +14,7 @@ composer require dyorg/slim-token-authentication
 ## Getting authentication
 
 Start creating a `authenticator` function, this function will make the token validation of your application.
-When you create a new instance of `TokenAuthentication` you must pass a array with configuration options. 
+When you create a new instance of `TokenAuthentication` you must pass a array with configuration options.
 You need setting authenticator and path options to authentication start work.
 
 ```php
@@ -22,14 +22,14 @@ $authenticator = function($request, TokenAuthentication $tokenAuth){
 
     # Search for token on header, parameter, cookie or attribute
     $token = $tokenAuth->findToken($request);
-    
+
     # Your method to make token validation
     $user = User::auth_token($token);
-    
+
     # If occured ok authentication continue to route
     # before end you can storage the user informations or whatever
     ...
-    
+
 };
 
 $app = new App();
@@ -42,7 +42,7 @@ $app->add(new TokenAuthentication([
 
 ### Find Token
 
-This middleware contains the method `findToken()`, you can access it from your authenticator method through the second param (`TokenAuthentication` instance). 
+This middleware contains the method `findToken()`, you can access it from your authenticator method through the second param (`TokenAuthentication` instance).
 This method is able to search for authentication token on header, parameter, cookie or attribute.
 You can configure it through options settings.
 
@@ -50,9 +50,9 @@ You can configure it through options settings.
 
 ### Path
 
-By default none route require authentication. 
+By default none route require authentication.
 You must set one or more routes to be restrict by authentication, setting it on `path` option.
- 
+
 ```php
 ...
 
@@ -83,8 +83,8 @@ $app->add(new TokenAuthentication([
 ### Header
 
 By default middleware tries to find token from `Authorization` header. You can change header name using `header` option.
-Is expected in Authorization header the value format as `Bearer <token>`, it is matched using a regular expression. 
-If you want to work without token type or with other token type, like `Basic <token>`, 
+Is expected in Authorization header the value format as `Bearer <token>`, it is matched using a regular expression.
+If you want to work without token type or with other token type, like `Basic <token>`,
 you can change the regular expression pattern setting it on `regex` option.
 You can disabled authentication via header setting `header` option as null.
 
@@ -101,9 +101,8 @@ $app->add(new TokenAuthentication([
 
 ### Parameter
 
-If token was not found on header, middleware tries to find `authorization` query parameter. 
-You can change parameter name using `parameter` option. 
-You can disabled authentication via parameter setting `parameter` option as null.
+If token was not found on header and parameter name is defined, middleware tries to find `authorization` query parameter.
+You can set parameter name using `parameter` option.
 
 ```php
 ...
@@ -117,9 +116,8 @@ $app->add(new TokenAuthentication([
 
 ### Cookie
 
-If token was not found yet, middleware tries to find `authorization` cookie. 
-You can change cookie name using `cookie` option. 
-You can disabled authentication via cookie setting `cookie` option as null.
+If token was not found yet and cookie name is defined, middleware tries to find `authorization` cookie.
+You can set cookie name using `cookie` option.
 
 ```php
 ...
@@ -133,9 +131,8 @@ $app->add(new TokenAuthentication([
 
 ### Argument
 
-As a last resort, middleware tries to find `authorization` argument of route.
-You can change argument name using `argument` option. 
-You can disabled authentication via argument setting `argument` option as null.
+As a last resort, if route argument name is defined, middleware tries to find `authorization` argument of route.
+You can set argument name using `argument` option.
 
 ```php
 ...
@@ -179,8 +176,8 @@ This error function is called when `TokenAuthentication` catch an throwable clas
 
 ### Secure
 
-Tokens are essentially passwords. You should treat them as such and you should always use HTTPS. 
-If the middleware detects insecure usage over HTTP it will return unathorized with a message `Required HTTPS for token authentication`. 
+Tokens are essentially passwords. You should treat them as such and you should always use HTTPS.
+If the middleware detects insecure usage over HTTP it will return unathorized with a message `Required HTTPS for token authentication`.
 This rule is relaxed for requests on localhost. To allow insecure usage you must enable it manually by setting `secure` to false.
 
 ```php
