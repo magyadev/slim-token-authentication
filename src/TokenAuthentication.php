@@ -24,7 +24,7 @@ class TokenAuthentication
         'path' => null,
         'passthrough' => null,
         'authenticator' => null,
-        'error' => null,
+        'errorHandler' => null,
         'header' => 'Authorization',
         'regex' => '/Bearer\s+(.*)$/i',
         'parameter' => null,
@@ -65,7 +65,7 @@ class TokenAuthentication
             $authResult = $this->options['authenticator']($request, $this);
 
             if (!$authResult) {
-                return $this->error($request, $response);
+                return $this->handleError($request, $response, new \Exception('Authenticator returned nothing'));
             }
 
             if (is_object($authResult) && $authResult instanceof Request) {
@@ -76,7 +76,7 @@ class TokenAuthentication
 
         } catch (UnauthorizedExceptionInterface $e) {
             $this->setResponseMessage($e->getMessage());
-            return $this->error($request, $response);
+            return $this->handleError($request, $response, $e);
         }
     }
 
@@ -114,12 +114,11 @@ class TokenAuthentication
         return false;
     }
 
-    public function error(Request $request, Response $response)
+    public function handleError(Request $request, Response $response, \Throwable $error)
     {
         /** If exists a custom error function callable, ignore remaining code */
-        if (!empty($this->options['error'])) {
-            
-            $custom_error_response = $this->options['error']($request, $response, $this);
+        if (!empty($this->options['errorHandler'])) {
+            $custom_error_response = $this->options['errorHandler']($request, $response, $error, $this);
 
             if ($custom_error_response instanceof Response) {
                return $custom_error_response;
@@ -127,7 +126,6 @@ class TokenAuthentication
                 throw new \Exception("The error function must return an object of class Response.");
             }
         }
-
         if ($this->getResponseMessage())
             $res['message'] = $this->getResponseMessage();
         else
@@ -237,15 +235,15 @@ class TokenAuthentication
         return $this->options['passthrough'];
     }
 
-    public function setError(Callable $error)
+    public function setErrorHandler(Callable $errorHandler)
     {
-        $this->options['error'] = $error;
+        $this->options['errorHandler'] = $errorHandler;
         return $this;
     }
 
-    public function getError()
+    public function getErrorHandler()
     {
-        return $this->options['error'];
+        return $this->options['errorHandler'];
     }
 
     public function setAuthenticator(Callable $authenticator)
